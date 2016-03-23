@@ -92,7 +92,7 @@ def skin_user_skinname():
 config.skin = ConfigSubsection()
 DEFAULT_SKIN = "oDreamy/skin.xml"
 if not fileExists(resolveFilename(SCOPE_SKIN, DEFAULT_SKIN)):
-	DEFAULT_SKIN = "skin.xml"
+	DEFAULT_SKIN = "DMConcinnity-HD/skin.xml"
 if not fileExists(resolveFilename(SCOPE_SKIN, DEFAULT_SKIN)):
 	# in that case, fallback to Magic (which is an SD skin)
 	DEFAULT_SKIN = "skin.xml"
