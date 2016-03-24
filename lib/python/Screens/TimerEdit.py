@@ -63,9 +63,7 @@ class TimerEditList(Screen):
 				"down": self.down
 			}, -1)
 		self.setTitle(_("Timer overview"))
-		# Disable for test because it crashes on some boxes with SSD #############
-		#self.session.nav.RecordTimer.on_state_change.append(self.onStateChange)
-		##########################################################################
+		self.session.nav.RecordTimer.on_state_change.append(self.onStateChange)
 		self.onShown.append(self.updateState)
 
 	def createSummary(self):
@@ -440,9 +438,7 @@ class TimerEditList(Screen):
 		self.finishedAdd(answer)
 
 	def leave(self):
-		# Disable for test because it crashes on some boxes with SSD #############
-		#self.session.nav.RecordTimer.on_state_change.remove(self.onStateChange)
-		##########################################################################
+		self.session.nav.RecordTimer.on_state_change.remove(self.onStateChange)
 		self.close()
 
 	def onStateChange(self, entry):

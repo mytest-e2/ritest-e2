@@ -1,5 +1,3 @@
-from time import time, localtime, gmtime
-from os import path
 from fcntl import ioctl
 from struct import pack, unpack
 from Components.config import config
@@ -38,16 +36,25 @@ def setFPWakeuptime(wutime):
 			print "setFPWakeupTime failed!"
 
 def setRTCoffset():
-	forsleep = (localtime(time()).tm_hour-gmtime(time()).tm_hour)*3600
-	print "[RTC] set RTC offset to %s sec." % (forsleep)
+	import time
+	if time.localtime().tm_isdst == 0:
+		forsleep = 7200+time.timezone
+	else:
+		forsleep = 3600-time.timezone
+
+	t_local = time.localtime(int(time.time()))
+
+	print "set RTC to %s (rtc_offset = %s sec.)" % (time.strftime("%Y/%m/%d %H:%M", t_local), forsleep)
+
+	# Set RTC OFFSET (diff. between UTC and Local Time)
 	try:
 		open("/proc/stb/fp/rtc_offset", "w").write(str(forsleep))
 	except IOError:
-		print "setRTCoffset failed!"
+		print "set RTC Offset failed!"
 
 def setRTCtime(wutime):
-        if path.exists("/proc/stb/fp/rtc_offset"):
-		setRTCoffset()
+	if getBoxType() in ('gb800solo', 'gb800se', 'gb800ue') or getBrandOEM().startswith('ini') or getBrandOEM() in ('fulan'):
+		setRTCoffset() 
 	try:
 		f = open("/proc/stb/fp/rtc", "w")
 		f.write(str(wutime))

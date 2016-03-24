@@ -327,20 +327,6 @@ void eDVBLocalTimeHandler::setUseDVBTime(bool b)
 	}
 }
 
-void eDVBLocalTimeHandler::syncDVBTime()
-{
-	eDebug("[eDVBLocalTimeHandler] sync local time with transponder time!");
-	std::map<iDVBChannel*, channel_data>::iterator it = m_knownChannels.begin();
-	for (; it != m_knownChannels.end(); ++it)
-	{
-		if (it->second.m_prevChannelState == iDVBChannel::state_ok)
-		{
-			it->second.tdt = new TDT(it->second.channel);
-			it->second.tdt->start();
-		}
-	}
-}
-
 void eDVBLocalTimeHandler::updateNonTuned()
 {
 	updateTime(-1, 0, 0);
@@ -596,7 +582,7 @@ void eDVBLocalTimeHandler::DVBChannelStateChanged(iDVBChannel *chan)
 					m_knownChannels.erase(it);
 					if (m_knownChannels.empty())
 						m_updateNonTunedTimer->start(TIME_UPDATE_INTERVAL, true);
-					return;
+					break;
 				default: // ignore all other events
 					return;
 			}

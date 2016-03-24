@@ -25,45 +25,30 @@ def InitOsd():
 		SystemInfo["CanChangeOsdPosition"] = False
 		SystemInfo["CanChange3DOsd"] = False
 
-	if getBrandOEM() in ('dreambox'):
-		SystemInfo["CanChangeOsdPosition"] = True
-
 	def setOSDLeft(configElement):
 		if SystemInfo["CanChangeOsdPosition"]:
-			if getBrandOEM() in ('dreambox'):
-				f = open("/proc/stb/vmpeg/0/dst_left", "w")
-			else:
-				f = open("/proc/stb/fb/dst_left", "w")
+			f = open("/proc/stb/fb/dst_left", "w")
 			f.write('%X' % configElement.value)
 			f.close()
 	config.osd.dst_left.addNotifier(setOSDLeft)
 
 	def setOSDWidth(configElement):
 		if SystemInfo["CanChangeOsdPosition"]:
-			if getBrandOEM() in ('dreambox'):
-				f = open("/proc/stb/vmpeg/0/dst_width", "w")
-			else:
-				f = open("/proc/stb/fb/dst_width", "w")
+			f = open("/proc/stb/fb/dst_width", "w")
 			f.write('%X' % configElement.value)
 			f.close()
 	config.osd.dst_width.addNotifier(setOSDWidth)
 
 	def setOSDTop(configElement):
 		if SystemInfo["CanChangeOsdPosition"]:
-			if getBrandOEM() in ('dreambox'):
-				f = open("/proc/stb/vmpeg/0/dst_top", "w")
-			else:
-				f = open("/proc/stb/fb/dst_top", "w")
+			f = open("/proc/stb/fb/dst_top", "w")
 			f.write('%X' % configElement.value)
 			f.close()
 	config.osd.dst_top.addNotifier(setOSDTop)
 
 	def setOSDHeight(configElement):
 		if SystemInfo["CanChangeOsdPosition"]:
-			if getBrandOEM() in ('dreambox'):
-				f = open("/proc/stb/vmpeg/0/dst_height", "w")
-			else:
-				f = open("/proc/stb/fb/dst_height", "w")
+			f = open("/proc/stb/fb/dst_height", "w")
 			f.write('%X' % configElement.value)
 			f.close()
 	config.osd.dst_height.addNotifier(setOSDHeight)
@@ -534,7 +519,7 @@ class OSD3DSetupScreen(Screen, ConfigListScreen):
 		Screen.__init__(self, session)
 		self.setup_title = _("OSD 3D Setup")
 		self.skinName = "Setup"
-		self["status"] = StaticText()
+		self["status"] = StaticText()		
 
 		self["key_red"] = StaticText(_("Cancel"))
 		self["key_green"] = StaticText(_("OK"))

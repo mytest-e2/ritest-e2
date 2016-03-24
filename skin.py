@@ -8,7 +8,6 @@ from enigma import eSize, ePoint, eRect, gFont, eWindow, eLabel, ePixmap, eWindo
 from Components.config import ConfigSubsection, ConfigText, config, ConfigYesNo, ConfigSelection, ConfigNothing
 from Components.Converter.Converter import Converter
 from Components.Sources.Source import Source, ObsoleteSource
-from Components.SystemInfo import SystemInfo
 from Tools.Directories import resolveFilename, SCOPE_SKIN, SCOPE_SKIN_IMAGE, SCOPE_FONTS, SCOPE_ACTIVE_SKIN, SCOPE_ACTIVE_LCDSKIN, SCOPE_CURRENT_SKIN, SCOPE_CONFIG, fileExists
 from Tools.Import import my_import
 from Tools.LoadPixmap import LoadPixmap
@@ -92,32 +91,53 @@ def skin_user_skinname():
 config.skin = ConfigSubsection()
 DEFAULT_SKIN = "oDreamy/skin.xml"
 if not fileExists(resolveFilename(SCOPE_SKIN, DEFAULT_SKIN)):
-	DEFAULT_SKIN = "DMConcinnity-HD/skin.xml"
-if not fileExists(resolveFilename(SCOPE_SKIN, DEFAULT_SKIN)):
-	# in that case, fallback to Magic (which is an SD skin)
 	DEFAULT_SKIN = "skin.xml"
 config.skin.primary_skin = ConfigText(default=DEFAULT_SKIN)
 
-
-if SystemInfo["grautec"]:
-	DEFAULT_DISPLAY_SKIN = "skin_display_grautec.xml"
-else:
-	DEFAULT_DISPLAY_SKIN = "skin_display.xml"
-config.skin.display_skin = ConfigText(default=DEFAULT_DISPLAY_SKIN)
+DEFAULT_DISPLAY_SKIN = "skin_display.xml"
+#config.skin.display_skin = ConfigText(default=DEFAULT_DISPLAY_SKIN)
+config.skin.display_skin = ConfigSelection(default = "skin_display.xml", choices = [("skin_display.xml", _("Channel Name")),("skin_text_clock.xml", _("Clock"))])
 
 profile("LoadSkin")
-res = None
-name = skin_user_skinname()
-if name:
-	res = addSkin(name, SCOPE_CONFIG)
-if not name or not res:
-	addSkin('skin_user.xml', SCOPE_CONFIG)
+try:
+	name = skin_user_skinname()
+	if name is not None:
+		addSkin(name, SCOPE_CONFIG)
+	else:
+		addSkin('skin_user.xml', SCOPE_CONFIG)
+except (SkinError, IOError, AssertionError), err:
+	print "not loading user skin: ", err
 
 # some boxes lie about their dimensions
 addSkin('skin_box.xml')
 # add optional discrete second infobar
 addSkin('skin_second_infobar.xml')
+
+if getBoxType() in ('vuultimo', 'vuduo2', 'gb800ue', 'gb800ueplus', 'gbultraue', 'gbquad', 'gbquadplus', 'xpeedlx3', 'et10000', 'et8500', 'et9x00', 'vuuno', 'atemionemesis'):
+	config.skin.display_skin = ConfigText(default = "skin_display.xml")
+
+if getBoxType() == "inihde":
+	config.skin.display_skin = ConfigText(default = "skin_display_text.xml")
+
+#else:
+#	config.skin.display_skin = ConfigNothing()
+
 display_skin_id = 1
+from Components.SystemInfo import SystemInfo
+if SystemInfo["OledDisplay"]:
+	if fileExists('/usr/share/enigma2/display/skin_display.xml'):
+		if fileExists(resolveFilename(SCOPE_CONFIG, config.skin.display_skin.value)):
+			addSkin(config.skin.display_skin.value, SCOPE_CONFIG)
+		else:	
+			addSkin('display/' + config.skin.display_skin.value)
+
+if SystemInfo["FBLCDDisplay"]:
+	if fileExists('/usr/share/enigma2/display/skin_display.xml'):
+		if fileExists(resolveFilename(SCOPE_CONFIG, config.skin.display_skin.value)):
+			addSkin(config.skin.display_skin.value, SCOPE_CONFIG)
+		else:	
+			addSkin('display/' + config.skin.display_skin.value)
+
 if getBoxType().startswith('dm'):
 	display_skin_id = 2
 try:
